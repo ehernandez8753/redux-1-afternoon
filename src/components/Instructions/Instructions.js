@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import store, {ADD_INSTRUCTION} from "../../store";
+import store, {ADD_INSTRUCTION, ADD_RECIPE, CLEAR_INPUTS} from "../../store";
 
 class Instructions extends Component {
   constructor(props) {
@@ -10,6 +10,14 @@ class Instructions extends Component {
       instructions: reduxState.instructions,
       input: ""
     };
+  }
+  componentDidMount(){
+    store.subscribe(() => {
+      const reduxState = store.getState();
+      this.setState({
+        instructions: reduxState.instructions
+      });
+    });
   }
   handleChange(val) {
     this.setState({
@@ -26,7 +34,14 @@ class Instructions extends Component {
     });
   }
   create() {
-    // Create new recipe in Redux state
+    store.dispatch({
+      type: ADD_RECIPE
+    });
+  }
+  clearInputs(){
+    store.dispatch({
+      type: CLEAR_INPUTS
+    });
   }
   render() {
     const instructions = this.state.instructions.map((instruction, i) => {
@@ -51,7 +66,7 @@ class Instructions extends Component {
           <button className='left_button'>Previous</button>
         </Link>
         <Link to="/">
-          <button className='right_button' onClick={() => this.create()}>Create</button>
+          <button className='right_button' onClick={() => {this.create(); this.clearInputs()}}>Create</button>
         </Link>
       </div>
     );
